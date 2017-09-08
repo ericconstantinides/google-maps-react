@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
-import {Link} from 'react-router'
+import { Link } from 'react-router'
 import GitHubForkRibbon from 'react-github-fork-ribbon'
 
-let GoogleApiWrapper;
+let GoogleApiWrapper
 if (__IS_DEV__) {
   GoogleApiWrapper = require('../src/index').GoogleApiWrapper
 } else {
@@ -14,7 +14,6 @@ if (__IS_DEV__) {
 import styles from './styles.module.css'
 
 export const Container = React.createClass({
-
   propTypes: {
     children: PropTypes.element.isRequired
   },
@@ -23,31 +22,31 @@ export const Container = React.createClass({
     router: PropTypes.object
   },
 
-  renderChildren: function() {
-    const {children} = this.props;
-    if (!children) return;
+  renderChildren: function () {
+    const { children } = this.props
+    if (!children) return
 
     const sharedProps = {
       google: this.props.google,
       loaded: this.props.loaded
     }
     return React.Children.map(children, c => {
-      return React.cloneElement(c, sharedProps, {
-
-      });
+      return React.cloneElement(c, sharedProps, {})
     })
   },
 
-  render: function() {
-    const {routeMap, routeDef} = this.props;
-    const {router} = this.context;
+  render: function () {
+    const { routeMap, routeDef } = this.props
+    const { router } = this.context
 
-    const c = this.renderChildren();
+    const c = this.renderChildren()
     return (
       <div className={styles.container}>
-        <GitHubForkRibbon href="//github.com/fullstackreact/google-maps-react"
-                  target="_blank"
-                  position="right">
+        <GitHubForkRibbon
+          href='//github.com/fullstackreact/google-maps-react'
+          target='_blank'
+          position='right'
+        >
           Fork me on GitHub
         </GitHubForkRibbon>
         <div className={styles.wrapper}>
@@ -55,9 +54,7 @@ export const Container = React.createClass({
             <ul>
               {Object.keys(routeMap).map(key => {
                 return (
-                  <Link to={key}
-                        activeClassName={styles.active}
-                        key={key}>
+                  <Link to={key} activeClassName={styles.active} key={key}>
                     <li>{routeMap[key].name}</li>
                   </Link>
                 )
@@ -67,7 +64,11 @@ export const Container = React.createClass({
           <div className={styles.content}>
             <div className={styles.header}>
               <h1>{routeDef && routeDef.name} Example</h1>
-              <h2><a href="https://github.com/fullstackreact/google-maps-react/blob/master/README.md">Readme</a></h2>
+              <h2>
+                <a href='https://github.com/fullstackreact/google-maps-react/blob/master/README.md'>
+                  Readme
+                </a>
+              </h2>
             </div>
             {c}
           </div>
@@ -79,5 +80,5 @@ export const Container = React.createClass({
 
 export default GoogleApiWrapper({
   apiKey: __GAPI_KEY__,
-  libraries: ['places','visualization']
+  libraries: ['places', 'visualization']
 })(Container)
