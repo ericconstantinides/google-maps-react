@@ -11,57 +11,65 @@ const evtNames = [
   'mouseout',
   'mouseover',
   'mouseup',
-  'recenter',
-];
+  'recenter'
+]
 
-const wrappedPromise = function() {
-    var wrappedPromise = {},
-        promise = new Promise(function (resolve, reject) {
-            wrappedPromise.resolve = resolve;
-            wrappedPromise.reject = reject;
-        });
-    wrappedPromise.then = promise.then.bind(promise);
-    wrappedPromise.catch = promise.catch.bind(promise);
-    wrappedPromise.promise = promise;
+const wrappedPromise = function () {
+  var wrappedPromise = {},
+    promise = new Promise(function (resolve, reject) {
+      wrappedPromise.resolve = resolve
+      wrappedPromise.reject = reject
+    })
+  wrappedPromise.then = promise.then.bind(promise)
+  wrappedPromise.catch = promise.catch.bind(promise)
+  wrappedPromise.promise = promise
 
-    return wrappedPromise;
+  return wrappedPromise
 }
 
 export class Marker extends React.Component {
-
-  componentDidMount() {
-    this.markerPromise = wrappedPromise();
-    this.renderMarker();
+  componentDidMount () {
+    this.markerPromise = wrappedPromise()
+    this.renderMarker()
   }
 
-  componentDidUpdate(prevProps) {
-    if ((this.props.map !== prevProps.map) ||
-      (this.props.position !== prevProps.position) ||
-      (this.props.icon !== prevProps.icon)) {
-        if (this.marker) {
-            this.marker.setMap(null);
-        }
-        this.renderMarker();
+  componentDidUpdate (prevProps) {
+    if (
+      this.props.map !== prevProps.map ||
+      this.props.position !== prevProps.position ||
+      this.props.icon !== prevProps.icon
+    ) {
+      if (this.marker) {
+        this.marker.setMap(null)
+      }
+      this.renderMarker()
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     if (this.marker) {
-      this.marker.setMap(null);
+      this.marker.setMap(null)
     }
   }
 
-  renderMarker() {
+  renderMarker () {
     let {
-      map, google, position, mapCenter, icon, label, draggable, title
-    } = this.props;
+      map,
+      google,
+      position,
+      mapCenter,
+      icon,
+      label,
+      draggable,
+      title
+    } = this.props
     if (!google) {
       return null
     }
 
-    let pos = position || mapCenter;
+    let pos = position || mapCenter
     if (!(pos instanceof google.maps.LatLng)) {
-      position = new google.maps.LatLng(pos.lat, pos.lng);
+      position = new google.maps.LatLng(pos.lat, pos.lng)
     }
 
     const pref = {
@@ -71,31 +79,31 @@ export class Marker extends React.Component {
       label: label,
       title: title,
       draggable: draggable
-    };
-    this.marker = new google.maps.Marker(pref);
+    }
+    this.marker = new google.maps.Marker(pref)
 
     evtNames.forEach(e => {
-      this.marker.addListener(e, this.handleEvent(e));
-    });
+      this.marker.addListener(e, this.handleEvent(e))
+    })
 
-    this.markerPromise.resolve(this.marker);
+    this.markerPromise.resolve(this.marker)
   }
 
-  getMarker() {
-    return this.markerPromise;
+  getMarker () {
+    return this.markerPromise
   }
 
-  handleEvent(evt) {
-    return (e) => {
+  handleEvent (evt) {
+    return e => {
       const evtName = `on${camelize(evt)}`
       if (this.props[evtName]) {
-        this.props[evtName](this.props, this.marker, e);
+        this.props[evtName](this.props, this.marker, e)
       }
     }
   }
 
-  render() {
-    return null;
+  render () {
+    return null
   }
 }
 
@@ -104,7 +112,7 @@ Marker.propTypes = {
   map: PropTypes.object
 }
 
-evtNames.forEach(e => Marker.propTypes[e] = PropTypes.func)
+evtNames.forEach(e => (Marker.propTypes[e] = PropTypes.func))
 
 Marker.defaultProps = {
   name: 'Marker'

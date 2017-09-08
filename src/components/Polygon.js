@@ -2,43 +2,43 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { camelize } from '../lib/String'
-const evtNames = ['click', 'mouseout', 'mouseover'];
+const evtNames = ['click', 'mouseout', 'mouseover']
 
-const wrappedPromise = function() {
-    var wrappedPromise = {},
-        promise = new Promise(function (resolve, reject) {
-            wrappedPromise.resolve = resolve;
-            wrappedPromise.reject = reject;
-        });
-    wrappedPromise.then = promise.then.bind(promise);
-    wrappedPromise.catch = promise.catch.bind(promise);
-    wrappedPromise.promise = promise;
+const wrappedPromise = function () {
+  var wrappedPromise = {},
+    promise = new Promise(function (resolve, reject) {
+      wrappedPromise.resolve = resolve
+      wrappedPromise.reject = reject
+    })
+  wrappedPromise.then = promise.then.bind(promise)
+  wrappedPromise.catch = promise.catch.bind(promise)
+  wrappedPromise.promise = promise
 
-    return wrappedPromise;
+  return wrappedPromise
 }
 
 export class Polygon extends React.Component {
-  componentDidMount() {
-    this.polygonPromise = wrappedPromise();
-    this.renderPolygon();
+  componentDidMount () {
+    this.polygonPromise = wrappedPromise()
+    this.renderPolygon()
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate (prevProps) {
     if (this.props.map !== prevProps.map) {
-        if (this.polygon) {
-          this.polygon.setMap(null);
-          this.renderPolygon();
-        }
+      if (this.polygon) {
+        this.polygon.setMap(null)
+        this.renderPolygon()
+      }
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     if (this.polygon) {
-      this.polygon.setMap(null);
+      this.polygon.setMap(null)
     }
   }
 
-  renderPolygon() {
+  renderPolygon () {
     const {
       map,
       google,
@@ -48,10 +48,10 @@ export class Polygon extends React.Component {
       strokeWeight,
       fillColor,
       fillOpacity
-    } = this.props;
+    } = this.props
 
     if (!google) {
-        return null;
+      return null
     }
 
     const params = {
@@ -62,32 +62,32 @@ export class Polygon extends React.Component {
       strokeWeight,
       fillColor,
       fillOpacity
-    };
+    }
 
-    this.polygon = new google.maps.Polygon(params);
+    this.polygon = new google.maps.Polygon(params)
 
     evtNames.forEach(e => {
-      this.polygon.addListener(e, this.handleEvent(e));
-    });
+      this.polygon.addListener(e, this.handleEvent(e))
+    })
 
-    this.polygonPromise.resolve(this.polygon);
+    this.polygonPromise.resolve(this.polygon)
   }
 
-  getPolygon() {
-    return this.polygonPromise;
+  getPolygon () {
+    return this.polygonPromise
   }
 
-  handleEvent(evt) {
-    return (e) => {
+  handleEvent (evt) {
+    return e => {
       const evtName = `on${camelize(evt)}`
       if (this.props[evtName]) {
-        this.props[evtName](this.props, this.polygon, e);
+        this.props[evtName](this.props, this.polygon, e)
       }
     }
   }
 
-  render() {
-    return null;
+  render () {
+    return null
   }
 }
 
@@ -100,7 +100,7 @@ Polygon.propTypes = {
   fillOpacity: PropTypes.number
 }
 
-evtNames.forEach(e => Polygon.propTypes[e] = PropTypes.func)
+evtNames.forEach(e => (Polygon.propTypes[e] = PropTypes.func))
 
 Polygon.defaultProps = {
   name: 'Polygon'
